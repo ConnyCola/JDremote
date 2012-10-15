@@ -311,9 +311,7 @@ NSMutableArray *PackageNameArray;
 			NSLog(@"   // Files found:    %d",countFile);
 			NSLog(@"   // Erledigt found: %d",countErledigt);
 		}
-		
-		
-		
+
 	}
 }
 
