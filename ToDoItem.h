@@ -4,12 +4,14 @@
 	
 	NSString *package;
 	NSString *time;
-	NSNumber *priority;	
+	NSNumber *progress;	
+	NSString *status;
 }
 
 @property (retain) NSString *package;
 @property (retain) NSString *time;
-@property (retain) NSNumber *priority;
+@property (retain) NSNumber *progress;
+@property (retain) NSString *status;
 
 
 @end

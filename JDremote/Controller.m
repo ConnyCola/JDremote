@@ -169,9 +169,10 @@ NSMutableArray *PackageNameArray;
 {
     ToDoItem *newToDo = [[ToDoItem alloc] init];
 	
-	[newToDo setPriority:[NSNumber numberWithInt:80]];
+	[newToDo setProgress:[NSNumber numberWithInt:80]];
     [newToDo setTime:@"Test Eintrag"];
     [newToDo setPackage:@"leer"];
+	[newToDo setStatus:@" . "];
 	
     [doToItemsArrayController addObject:newToDo]; 
 }
@@ -249,6 +250,7 @@ NSMutableArray *PackageNameArray;
 	NSString *Backp = @"";
 	NSString *BackPri = @"";
 	NSString *BackTime = @"";
+	NSString *BackStatus = @"";
 	PackageNameArray = [NSMutableArray new];
 	
 
@@ -318,9 +320,10 @@ NSMutableArray *PackageNameArray;
 			NSLog(@"///// %@",Backp);
 			NSLog(@"   // Files found:    %d",countFile);
 			NSLog(@"   // Erledigt found: %d",countErledigt);
-			BackTime = [NSString stringWithFormat:@"%d",countErledigt];
-			BackTime = [BackTime stringByAppendingString:@"/"];
-			BackTime = [BackTime stringByAppendingString:[NSString stringWithFormat:@"%d",countFile]];
+			
+			BackStatus = [NSString stringWithFormat:@"%d",countErledigt];
+			BackStatus = [BackStatus stringByAppendingString:@"/"];
+			BackStatus = [BackStatus stringByAppendingString:[NSString stringWithFormat:@"%d",countFile]];
 		}
 
 		// Hinzufügen des Objekts zum Array
@@ -341,7 +344,8 @@ NSMutableArray *PackageNameArray;
 			
 			[newToDo setPackage:Backp];
 			[newToDo setTime:BackTime];
-			[newToDo setPriority:[NSNumber numberWithInt:BackPri.intValue]];
+			[newToDo setStatus:BackStatus];
+			[newToDo setProgress:[NSNumber numberWithInt:BackPri.intValue]];
 			
 			[doToItemsArrayController addObject:newToDo]; 
 		}

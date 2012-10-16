@@ -3,8 +3,9 @@
 
 @implementation ToDoItem
 
-@synthesize priority;
+@synthesize progress;
 @synthesize package;
 @synthesize time;
+@synthesize status;
 
 @end
