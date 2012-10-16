@@ -31,6 +31,13 @@
 	
 	IBOutlet NSProgressIndicator *LinkGrabberPackageChangeIndicator;
 
+	//Preferences Window Outletes
+	IBOutlet NSWindow *PreferencesWindow;
+	
+	IBOutlet NSTextField *RemoteDownloadDirLocField;
+	IBOutlet NSTextField *RemoteDLCDirField;
+	IBOutlet NSTextField *RemoteDLCDirLocField;
+	IBOutlet NSTextField *JDremoteURL;
 	
 
 	
@@ -53,6 +60,8 @@
 - (IBAction)addNewToDoItem:(id)sender;
 
 
+- (IBAction)SavePreferences:(id)sender;
+- (IBAction)showPreferences:(id)sender;
 
 
 

@@ -10,9 +10,9 @@
 #import "AppDelegate.h"
 #import "ToDoItem.h"
 
-NSString *URLget = @"http://broserver.dyndns-home.com:10025/get";
-NSString *URLset = @"http://broserver.dyndns-home.com:10025/set";
-NSString *URLaction = @"http://broserver.dyndns-home.com:10025/action";
+NSString *URLget = @""; // @"http://broserver.dyndns-home.com:10025/get";
+NSString *URLset = @""; // @"http://broserver.dyndns-home.com:10025/set";
+NSString *URLaction = @""; // @"http://broserver.dyndns-home.com:10025/action";
 
 NSString *LinkGrabberPackageName = @"";
 
@@ -25,8 +25,15 @@ NSMutableArray *PackageNameArray;
 @implementation Controller
 
 
+
 - (void)awakeFromNib
 {
+	//ini
+	URLget =	[JDremoteURL.stringValue stringByAppendingString:@"get"];
+	URLset =	[JDremoteURL.stringValue stringByAppendingString:@"set"];
+	URLaction = [JDremoteURL.stringValue stringByAppendingString:@"action"];
+
+	
 	
 	NSString *Limit = [self sendURL:[URLget stringByAppendingString:@"/speedlimit"]];
 	[SpeedLimitLabel setStringValue:Limit];
@@ -40,6 +47,8 @@ NSMutableArray *PackageNameArray;
 	[self GetLinkGrabberData];
 	
 	[self UpdateXML];
+	
+	
 
 	[NSThread detachNewThreadSelector:@selector(startTheBackgroundJob) toTarget:self withObject:nil];  
 }
@@ -94,13 +103,17 @@ NSMutableArray *PackageNameArray;
 	NSString *source = DLCfield.stringValue;
 	DLCfield.stringValue = @"";
 	
-	NSString *destinationMAC = @"/Volumes/BroDrive2/DLC/file.dlc";
-	NSString *destinationPC = @"I:\DLC/file.dlc";
+	NSString *destinationMAC = RemoteDLCDirLocField.stringValue; // @"/Volumes/BroDrive2/DLC/file.dlc";
+	NSString *destinationPC = @"I:\DLC/file.dlc"; // RemoteDLCDirField.stringValue;
+	
+	NSLog(@"MAC: %@",destinationMAC);
+	NSLog(@"PC:  %@",destinationPC);
+
 	
 	[[NSFileManager defaultManager] removeItemAtPath:destinationMAC error:nil];
 	[[NSFileManager defaultManager] copyItemAtPath:source toPath:destinationMAC error:nil];
 	
-	NSString *URL = @"http://broserver.dyndns-home.com:10025/action/add/container/";
+	NSString *URL = [URLaction stringByAppendingString:@"/add/container/" ];
 	[self sendURL:[URL stringByAppendingString:destinationPC]];
 	
 	
@@ -180,7 +193,7 @@ NSMutableArray *PackageNameArray;
 	[self sendURL:[URL stringByAppendingFormat:PackageDeleteURL]];
 	sleep(1);
 	
-	NSString *destinationMAC = @"/Volumes/BroDrive2/SORTIEREN/";
+	NSString *destinationMAC = RemoteDownloadDirLocField.stringValue; // @"/Volumes/BroDrive2/SORTIEREN/";
 	destinationMAC = [destinationMAC stringByAppendingString:PackageDelete];
 	[[NSFileManager defaultManager] removeItemAtPath:destinationMAC error:nil];
 
@@ -190,6 +203,21 @@ NSMutableArray *PackageNameArray;
 
 
 
+
+- (IBAction)showPreferences:(id)sender
+{
+	[NSApp beginSheet:PreferencesWindow 
+	   modalForWindow:nil
+		modalDelegate:nil 
+	   didEndSelector:NULL 
+		  contextInfo:NULL];
+}
+
+- (IBAction)SavePreferences:(id)sender
+{
+	[NSApp endSheet:PreferencesWindow];
+	[PreferencesWindow orderOut:sender];
+}
 
 
 
@@ -227,7 +255,8 @@ NSMutableArray *PackageNameArray;
 	Backp = @"0";
 	int index = 0;
 	
-	while ([Backp isNotEqualTo:@""]) {
+	while ([Backp isNotEqualTo:@""]) 
+	{
 		
 		if(index != 0)
 		{
@@ -246,28 +275,7 @@ NSMutableArray *PackageNameArray;
 		NSLog(@"%@",BackTime);
 
 
-		/*
-		 if([BackTime isEqualToString:@"0 B"])
-		 BackTime = @"";
-		 else{
-		 int intBacktime = ((BackTime.intValue * 17) / Speed.intValue);
-		 NSLog(@"%d",intBacktime);
-		 BackTime = [NSString stringWithFormat:@"%d",intBacktime];
-		 }
-		 */
-		if ([Backp isNotEqualTo:@""]) {
-			[PackageNameArray addObject:Backp];	
-			index++;
 			
-			ToDoItem *newToDo = [[ToDoItem alloc] init];
-			
-			[newToDo setPackage:Backp];
-			[newToDo setTime:BackTime];
-			[newToDo setPriority:[NSNumber numberWithInt:BackPri.intValue]];
-			
-			[doToItemsArrayController addObject:newToDo]; 
-		}
-	
 		
 		
 		// den File Stauts eines Packages durchsuchen um zu sehen ob alle Packete "Erledigt" sind
@@ -310,6 +318,32 @@ NSMutableArray *PackageNameArray;
 			NSLog(@"///// %@",Backp);
 			NSLog(@"   // Files found:    %d",countFile);
 			NSLog(@"   // Erledigt found: %d",countErledigt);
+			BackTime = [NSString stringWithFormat:@"%d",countErledigt];
+			BackTime = [BackTime stringByAppendingString:@"/"];
+			BackTime = [BackTime stringByAppendingString:[NSString stringWithFormat:@"%d",countFile]];
+		}
+
+		// Hinzufügen des Objekts zum Array
+		/*
+		 if([BackTime isEqualToString:@"0 B"])
+		 BackTime = @"";
+		 else{
+		 int intBacktime = ((BackTime.intValue * 17) / Speed.intValue);
+		 NSLog(@"%d",intBacktime);
+		 BackTime = [NSString stringWithFormat:@"%d",intBacktime];
+		 }
+		 */
+		if ([Backp isNotEqualTo:@""]) {
+			[PackageNameArray addObject:Backp];	
+			index++;
+			
+			ToDoItem *newToDo = [[ToDoItem alloc] init];
+			
+			[newToDo setPackage:Backp];
+			[newToDo setTime:BackTime];
+			[newToDo setPriority:[NSNumber numberWithInt:BackPri.intValue]];
+			
+			[doToItemsArrayController addObject:newToDo]; 
 		}
 
 	}
